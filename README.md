@@ -23,7 +23,7 @@ This is developed with shiny, an interactive web system based  on the R statisti
 
 ## Implementing the Discovery Platform
 To implement the discovery platform, it requires a set of images to display, stored within the images/ subdirectory of the www/ directory. These should be in a format that can be displayed directly in html (jpg, gif, or png).  Three additional files are used for setting up discovery platform. The basic directory/file structure is:
-
+<pre>
 app.R        Main shiny code
 main.csv     Main data table
 probs.csv    Probability table
@@ -31,7 +31,7 @@ info.json    Customize the discovery platform
 www/         web files
 www/fns.js   Custom javascript
 www/images   images of each case to be browsed.
-
+</pre>
 
 * main.csv
 This file contains information about the entire set of images in comma-separated format. Columns must be labeled as in the following example:
