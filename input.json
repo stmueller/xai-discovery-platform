@@ -1,0 +1,9 @@
+{
+    "title":"XAI Discovery Platform | MNIST Sample Data",
+    "subtitle":"Michigan Technological University | MacroCognition | IHMC",
+    "contact":"<a href='http://shanetmueller.info'>Shane T. Mueller</a> (shanem@mtu.edu)",
+    "about":"About: MNIST data with linear SVM classifier trained on 10,000 cases. Classifier achieved 89.2% accuracy on training set, and a similar accuracy (89.2%) was achieved for set of 50,000 validation cases. This platform browses 10,000 validation cases, sampled randomly so that 5,000 were correct and 5,000 were errors",
+    "otherFeatures":[],
+    "classNames":["1","2","3","4","5","6","7","8","9","0"],
+    "labelNames":["1","2","3","4","5","6","7","8","9","0"]
+}
