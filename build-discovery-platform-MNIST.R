@@ -29,7 +29,7 @@ notuse[use] <- F
 
 ##get the small training set
 dat.small <- dat[use,]
-dat.small$label <- as.factor(dat.small$label)
+
 
 #dat.test <- dat.small #do testing on the same training set.
 dat.validate <- dat[notuse,]
@@ -47,14 +47,18 @@ load("mnist.RData")
 ##test on trained data:
 sortorder <- c(1:10)
 names(sortorder) <- c(1:9,0)
-columnord <- order(sortorder[colnames(distn.full)])
 
-predictions.prob.small <- predict(s1,dat.small, probability=T)
-predictions.small <- as.numeric(as.character(predictions.prob))
-distn.small <- round(attr(predictions.prob.small,"probabilities"),4)[,columnord]
+##this just obtains some sample predictions so we can organize the column order
+pred.tmp <- predict(s1,dat.small[1:2,],probability=T)
+distn.tmp <- round(attr(pred.tmp,"probabilities"),4)
+columnord <- order(sortorder[colnames(distn.tmp)])
 
-mean((dat.small$class==predictions.small))
-confusion(dat.small$class,predictions.small)
+#predictions.prob.small <- predict(s1,dat.small, probability=T)
+#predictions.small <- as.numeric(as.character(predictions.prob))
+#distn.small <- round(attr(predictions.prob.small,"probabilities"),4)[,columnord]
+
+#mean((dat.small$class==predictions.small))
+#confusion(dat.small$class,predictions.small)
 
 
 
@@ -119,7 +123,7 @@ for(i in 1:nrow(dat.output))
   directory <- floor(as.numeric(id)/perdirectory)*perdirectory
   newdir <- directory
   if(newdir != olddir){
-    path <- paste("./images/D",newdir,"/",sep="")
+    path <- paste("images/D",newdir,"/",sep="")
   }
   olddir <- newdir
   fname<- (paste(path,"img",case$casetext,".png",sep=""))
@@ -137,7 +141,7 @@ load("mnist.RData")
 
 #if this is set to T, it will create png images for each selected case
 # and store them in www/images/
-regenImages <- F
+regenImages <- T
 if(regenImages)
 {
 dir.create("www")
@@ -155,13 +159,14 @@ for(i in 1:nrow(dat.output))
   newdir <- directory
   if(newdir != olddir){
     print(newdir)
-    path <- paste("./images/D",newdir,"/",sep="")
+    path <- paste("./www/images/D",newdir,"/",sep="")
     if(!dir.exists(path))
       dir.create(path)
   }
   olddir <- newdir
     
   fname<- case$fname
+  
   print(fname)
   png(fname)
   image(1:28,1:28,features[,28:1],col=grey(255:0/255),xaxt="n",yaxt="n",bty="n",

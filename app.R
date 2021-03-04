@@ -14,7 +14,8 @@ library(rjson)
 library(shinyWidgets)
 library(ggplot2)
 library(esquisse)
-
+library(heatmaply)
+library(shinyHeatmaply)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -74,6 +75,7 @@ ui <- fluidPage(
                 mainPanel(  verticalLayout(
                     htmlOutput("header2"),
                     htmlOutput("browser2"),
+                    plotOutput(outputId='heatmap',height=500,width=500),
                     plotOutput(outputId='error_plot',height=450,width=600),
                     plotOutput(outputId='CA_plot',height=600,width=600)
                     
@@ -236,7 +238,7 @@ data <- reactive({
   })
 
   info <- reactive({
-    fromJSON(file="input.json")
+    rjson::fromJSON(file="input.json")
   })
   
   confusion <- reactive({
@@ -865,6 +867,19 @@ output$browser2 <- renderText({
        })
     
     
+    
+    output$heatmap <- renderPlot(
+      {   
+        
+        error <- confusion()
+   
+        tab <- error$tab
+        par(mar=c(3,10,3,3))
+        heatmap(log(1+tab),keep.dendro = F,Rowv=NA,Colv=NA,
+                main="\nConfusion matrix",margins=c(3,3),scale="row",
+                xlab="Label",ylab="Classification",revC=T)
+      })
+    
    output$error_plot <- renderPlot(
        {   
          
@@ -883,20 +898,22 @@ output$browser2 <- renderText({
            targLevels <- dat$classes
            respLevels <- dat$labels
            
+           tab <- error$tab
+           tabx <- tab/rowSums(tab)
            
-           
-           par(mfrow=c(1,3),mar=c(6,6,6,0))
 
+
+         if(1)
+         {
+      par(mfrow=c(1,3))
+           
            barplot(error$classAccuracy$prob,names=error$classAccuracy$class,xlim=c(0,1),col="gold",horiz=T,
                    main="Accuracy of each class",las=1)
            grid()
            
         
            
-           tab <- error$tab
-           tabx <- tab/rowSums(tab)
-     
-           tmp <-tabx[targID,]
+              tmp <-tabx[targID,]
            tmp[targID] <- NA
           
             barplot(tmp,col="gold",horiz=T,xlim=c(0,1.1*max(c(.1,max(tmp,na.rm=T)))),
@@ -908,6 +925,7 @@ output$browser2 <- renderText({
            barplot(tmp,col="gold",horiz=T, xlim=c(0,1.1*max(c(.1,max(tmp,na.rm=T)))),
                    main=paste("Errors to classification ",resp),las=1)
            grid()
+         }
    })
    
     
@@ -918,6 +936,7 @@ output$browser2 <- renderText({
 output$CA_plot <- renderPlot(
   {   
     dt <- data()$dataTable
+
     correspmodel <- ca::ca(table(dt$label,dt$class),nd=2)
     plot(correspmodel,main="Correspondence map of classes and labels",
          arrows=c(FALSE,FALSE),
